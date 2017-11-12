@@ -1,0 +1,96 @@
+<html>
+<head>
+	<title>Weather App</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://code.angularjs.org/1.6.6/angular.min.js"></script>
+  <style type="text/css">
+    body{
+        background-image: url(weather2.jpg);
+        background-position: center center;
+        background-size: cover;
+    }
+    .jumbotron{
+      top: 50px;
+      background-color: black;
+      color:white;
+      opacity: 0.7;
+      filter:alpha (opacity=70);
+    }
+  </style>
+  <script type="text/javascript">
+    var myApp = angular.module('app', []);
+    myApp.controller('weatherController', ['$scope', function($scope){
+      $scope.locations = {
+        'bangalore':[12.9715987,77.5945627], 'mysore':[12.2958104,76.6393805],
+        'belgaum':[15.8496953,74.4976741], 'hubli':[15.371598,75.101166],
+        'gulbarga':[17.329731,76.8342957], 'davangere':[14.4663438,75.9238397],
+        'bijapur':[16.8301708,75.710031], 'mangalore':[12.9141417,74.8559568],
+        'tumkur':[13.3391677,77.1139984], 'hassan':[13.0068142,76.0995519],
+        'chitradurga':[14.2305594,76.3984537], 'udupi':[13.3408807,74.7421427],
+        'sakleshpur':[12.9441511,75.7865653], 'kolar':[13.1357446,78.1325611],
+        'sivmoga':[13.9299299,75.568101], 'raichur':[16.2120031,77.3439283]
+      };
+      $scope.cityFunc = function(){
+        var selected_city = $scope.city;
+        var lat = $scope.locations[selected_city][0];
+        var lon = $scope.locations[selected_city][1];
+        $.get("http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lon+"&appid=openweathermap api key", function(data, status){
+            if(status == "success"){
+              var temp = Math.round((data.main.temp) - 273.15);
+              var desc = data.weather[0].description;
+              var mint = Math.round((data.main.temp_min) - 273.15);
+              var maxt = Math.round((data.main.temp_max) - 273.15);
+              var hum = data.main.humidity; 
+              var pres = data.main.pressure;
+              var spd =  data.wind.speed;
+              var sunrise = new Date(data.sys.sunrise * 1000);
+              var sunr = sunrise.toLocaleTimeString();
+              var sunset = new Date(data.sys.sunset * 1000);
+              var suns = sunset.toLocaleTimeString();
+              $("#result_info").html(" Temperature of "+selected_city+" is "+temp+"&deg;C <br> MAX Temprature: "+maxt+"&deg;C <br> MIN Temprature: "+mint+"&deg;C <br> Weather description: "+desc+"<br> Humidity: "+hum+"% <br> Atmospheric pressure: "+pres+" hPa <br> Wind speed: "+spd+" meter/sec <br> Sunrise: "+sunr+"<br> Sunset: "+suns);
+            }
+            else{ 
+              $("#result_info").html("error in loading weather..try again!!");
+            }
+     });
+    }
+  }]);
+  </script>
+</head>
+<body ng-app = "app">
+  <div class="container-fluid">
+    <div ng-controller = "weatherController" class="container">
+     <div class="col-md-6 col-md-offset-3 jumbotron">
+      <h3>WEATHER FORECAST OF KARNATAKA</h3>
+      <div class="form-inline col-md-6">
+        <div class="form-group">
+	       <label for="sel">CITY:</label>
+          <select class="form-control" ng-model="city" id="sel" ng-change="cityFunc()">
+		        <option value="bangalore">Bangalore</option>
+    		    <option value="mysore">Mysore</option>
+    		    <option value="belgaum">Belgaum</option>
+  		      <option value="hubli">Hubli</option>
+  		      <option value="gulbarga">Gulbarga</option>
+  		      <option value="davangere">Davangere</option>
+  		      <option value="bijapur">Bijapur</option>
+  		      <option value="mangalore">Mangalore</option>
+  		      <option value="tumkur">Tumkur</option>
+  		      <option value="hassan">Hassan</option>
+  		      <option value="chitradurga">Chitradurga</option>
+  		      <option value="udupi">Udupi</option>
+  		      <option value="sakleshpur">Sakleshpur</option>
+ 		        <option value="kolar">Kolar</option>
+  		      <option value="sivmoga">Sivmoga</option>
+  		      <option value="raichur">Raichur</option>
+          </select>
+        </div>
+      </div><br><br><br>
+      <div class="clearfix"></div>
+      <div class="col-md-10" id="result_info"></div>
+    </div>
+  </div>
+  </div>
+</body>
+</html>
